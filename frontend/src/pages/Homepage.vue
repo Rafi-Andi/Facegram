@@ -42,6 +42,7 @@ const fetchFollowRequest = async () => {
 
   const data = response.data.followers
   followRequest.value = data.filter((d) => d.is_requested === true)
+  console.log(followRequest.value)
 }
 
 const acceptFollowRequest = async (username) => {

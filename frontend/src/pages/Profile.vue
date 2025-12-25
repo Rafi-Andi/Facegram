@@ -18,6 +18,7 @@ const fetchDetailUser = async () => {
   })
 
   dataDetailUser.value = response.data
+  console.log(dataDetailUser.value)
 }
 
 const fetchFollower = async () => {
@@ -26,7 +27,8 @@ const fetchFollower = async () => {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
   })
-  dataFollower.value = response.data.followers
+  const follower = response.data.followers.filter((follower) => follower.is_requested === false)
+  dataFollower.value = follower
 }
 const fetchFollowing = async () => {
   const response = await axios.get(`${url}/api/v1/users/${username.value}/following`, {
@@ -34,7 +36,9 @@ const fetchFollowing = async () => {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
   })
-  dataFollowing.value = response.data.following
+  const following = response.data.following.filter((follow) => follow.is_requested === false)
+  dataFollowing.value = following
+  console.log(response)
 }
 
 const deletePost = async (id) => {
@@ -66,7 +70,11 @@ const toggleFollow = async () => {
       )
       dataDetailUser.value.following_status = response.data.status
       alert(response.data.message)
-      dataDetailUser.value.followers_count += 1
+      if (dataDetailUser.value.is_private == 0) {
+        dataDetailUser.value.followers_count += 1
+        console.log('test')
+      }
+      console.log(response)
     } catch (error) {
       alert(error.response.data.message)
     }
@@ -82,7 +90,10 @@ const toggleFollow = async () => {
       )
       dataDetailUser.value.following_status = response.data.status
       alert(response.data.message)
-      dataDetailUser.value.followers_count -= 1
+      if(dataDetailUser.value.is_private == 0) {
+        dataDetailUser.value.followers_count -= 1
+      }
+      console.log(response)
     } catch (error) {
       alert(error.response.data.message)
     }
@@ -114,14 +125,14 @@ onMounted(() => {
 })
 
 onMounted(() => {
-    document.title = 'Profile'
+  document.title = 'Profile'
 })
 </script>
 
 <template>
-  <main class="mt-5" style="display: flex; justify-content: center; align-items: center;">
-    <h2 style="margin-top: 200px;" v-if="isLoading">Loading...</h2>
-    <div v-else class="container py-5" >
+  <main class="mt-5" style="display: flex; justify-content: center; align-items: center">
+    <h2 style="margin-top: 200px" v-if="isLoading">Loading...</h2>
+    <div v-else class="container py-5">
       <div class="px-5 py-4 bg-light mb-4 d-flex align-items-center justify-content-between">
         <div>
           <div class="d-flex align-items-center gap-2 mb-1">

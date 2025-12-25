@@ -21,7 +21,7 @@ class UserResource extends JsonResource
             "bio" => $this->following->bio,
             "is_private" => $this->following->is_private,
             "created_at" => $this->following->created_at,
-            "is_requested" => $this->following->is_requested,
+            "is_requested" => $this->is_accepted ? false : true,
         ];
     }
 }
