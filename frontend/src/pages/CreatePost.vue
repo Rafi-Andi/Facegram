@@ -24,12 +24,9 @@ const createPost = async () => {
       },
     })
 
-    console.log(formData)
-    console.log(response)
     alert(response.data.message)
     router.push({name: 'Profile', params: {username: localStorage.getItem('username')}})
   } catch (error) {
-    console.log(error)
     alert(error.response.data.message)
   } finally {
     isLoading.value = false

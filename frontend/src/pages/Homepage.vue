@@ -1,4 +1,5 @@
 <script setup>
+import timeAgo from '@/lib/FormatTimeAgo'
 import url from '@/router/url'
 import axios from 'axios'
 import { onMounted, ref } from 'vue'
@@ -9,6 +10,7 @@ const size = ref(10)
 const loading = ref(false)
 const hasMore = ref(true)
 const username = localStorage.getItem('username')
+const is_private = localStorage.getItem('is_private')
 
 const fetchDataPosts = async () => {
   if (loading.value || !hasMore.value) return
@@ -20,8 +22,7 @@ const fetchDataPosts = async () => {
   })
 
   const posts = response.data.posts
-
-  dataPosts.value.push(...posts.data)
+  dataPosts.value.push(...posts)
   if (page.value >= posts.last_page) {
     hasMore.value = false
   } else {
@@ -42,7 +43,6 @@ const fetchFollowRequest = async () => {
 
   const data = response.data.followers
   followRequest.value = data.filter((d) => d.is_requested === true)
-  console.log(response)
 }
 
 const acceptFollowRequest = async (username) => {
@@ -54,11 +54,9 @@ const acceptFollowRequest = async (username) => {
     })
     const findIndex = followRequest.value.findIndex((f) => f.username === username)
     followRequest.value.splice(findIndex, 1)
-    console.log(response)
     alert('Success Accept')
   } catch (error) {
     alert(error.response.data.message)
-    console.log(error)
   }
 }
 
@@ -72,8 +70,6 @@ const fetchExplorUser = async () => {
   })
 
   dataExploreUser.value = response.data.users
-  console.log(response)
-  console.log(dataExploreUser.value)
 }
 
 const loadMoreRef = ref(null)
@@ -117,7 +113,7 @@ onMounted(() => {
               class="card-header d-flex align-items-center justify-content-between bg-transparent py-3"
             >
               <h6 class="mb-0">{{ item?.user?.full_name }}</h6>
-              <small class="text-muted">{{ item?.user?.created_at }}</small>
+              <small class="text-muted">{{ timeAgo(item?.user?.created_at) }}</small>
             </div>
             <div class="card-body">
               <div class="card-images mb-2">
@@ -143,13 +139,10 @@ onMounted(() => {
           </div>
         </div>
         <div class="col-md-4">
-          <div class="request-follow mb-4">
+          <div class="request-follow mb-4" v-if="followRequest?.length >= 1 || is_private === 0">
             <h6 class="mb-3">Follow Requests</h6>
             <div class="request-follow-list">
               <div class="card mb-2">
-                <div v-if="followRequest?.length === 0">
-                  <p style="text-align: center">Tidak ada follow request</p>
-                </div>
                 <div
                   v-for="(item, index) in followRequest"
                   :key="index"

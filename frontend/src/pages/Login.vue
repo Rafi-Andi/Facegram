@@ -12,9 +12,11 @@ const formLogin = ref({
 const isLoading = ref(false)
 const token = localStorage.getItem('token')
 const username = localStorage.getItem('username')
+
 if (token) {
   router.push({ name: 'Profile', params: { username: username } })
 }
+const errors = ref(null)
 
 const handleLogin = async () => {
   try {
@@ -23,11 +25,12 @@ const handleLogin = async () => {
 
     localStorage.setItem('token', response.data.token)
     localStorage.setItem('username', response.data.user.username)
+    localStorage.setItem('is_private', response.data.user.is_private)
     alert(response.data.message)
     router.push({ name: 'Homepage' })
   } catch (error) {
     alert(error.response.data.message)
-    console.log(error)
+    errors.value = error.response.data.errors
   } finally {
     isLoading.value = false
   }
@@ -65,6 +68,8 @@ onMounted(() => {
                     id="username"
                     name="username"
                   />
+                   <p class="text-danger" v-if="errors?.username?.[0]">
+                    {{ errors?.username?.[0] }} </p>
                 </div>
 
                 <div class="mb-3">
@@ -76,6 +81,8 @@ onMounted(() => {
                     id="password"
                     name="password"
                   />
+                   <p class="text-danger" v-if="errors?.password?.[0]">
+                    {{ errors?.password?.[0] }}</p>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">

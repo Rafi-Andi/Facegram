@@ -1,4 +1,5 @@
 <script setup>
+import timeAgo from '@/lib/FormatTimeAgo'
 import url from '@/router/url'
 import axios from 'axios'
 import { onMounted, ref, watch } from 'vue'
@@ -17,7 +18,6 @@ const fetchDetailUser = async () => {
   })
 
   dataDetailUser.value = response.data
-  console.log(dataDetailUser.value)
 }
 
 const fetchFollower = async () => {
@@ -64,7 +64,6 @@ const toggleFollow = async () => {
           },
         },
       )
-      console.log(response)
       dataDetailUser.value.following_status = response.data.status
       alert(response.data.message)
       dataDetailUser.value.followers_count += 1
@@ -81,7 +80,6 @@ const toggleFollow = async () => {
           },
         },
       )
-      console.log(response)
       dataDetailUser.value.following_status = response.data.status
       alert(response.data.message)
       dataDetailUser.value.followers_count -= 1
@@ -212,7 +210,7 @@ onMounted(() => {
             class="card-header d-flex align-items-center justify-content-between bg-transparent py-3"
           >
             <h6 class="mb-0">{{ dataDetailUser?.full_name }}</h6>
-            <small class="text-muted">{{ dataDetailUser?.created_at }}</small>
+            <small class="text-muted">{{ timeAgo(dataDetailUser?.created_at) }}</small>
           </div>
           <div class="card mb-4">
             <div class="card-body">

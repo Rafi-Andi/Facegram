@@ -16,9 +16,7 @@ class PostController extends Controller
      */
     public function index(Request $request)
     {
-        $size = $request->get('size');
-        $page = max(1, $request->get('page') + 1);
-
+      $size = max(1, (int) $request->get('size', 10)); $page = max(0, (int) $request->get('page', 0));
         $validator = Validator::make($request->all(), [
             "page" => "min:0",
             "size" => "min:0|numeric"
@@ -32,11 +30,15 @@ class PostController extends Controller
                 "errors" => $validator->errors()
             ], 422);
         }
-        $posts  = Post::with('user', 'attachments')->paginate($size, ['*'], 'page', $page);
-
-        return response()->json([
-            "posts" => $posts
-        ], 200);
+        $posts = Post::with('user', 'attachments')->orderBy('created_at', 'desc')->skip($page * $size)->take($size)->get();
+        return response()->json(
+            [
+                "page" => $page,
+                "size" => $size,
+                "posts" => $posts
+            ],
+            200
+        );
     }
 
     /**
@@ -78,7 +80,7 @@ class PostController extends Controller
 
             foreach ($validated['attachments'] as $file) {
 
-               $attPath = 'posts/' . $file->getClientOriginalName();
+                $attPath = 'posts/' . $file->getClientOriginalName();
                 PostAttachment::create([
                     "storage_path" => $attPath,
                     "post_id" => $post->id
@@ -89,7 +91,6 @@ class PostController extends Controller
             return response()->json([
                 "message" => "Create post success",
             ], 200);
-
         } catch (Exception $e) {
             DB::rollBack();
 
@@ -145,6 +146,6 @@ class PostController extends Controller
 
         $post->delete();
 
-        return response()->json( 204);
+        return response()->json(204);
     }
 }

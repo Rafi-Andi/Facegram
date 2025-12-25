@@ -42,7 +42,9 @@ class UserController extends Controller
 
         $userLogged = $request->user();
 
-        $user = User::with('follower', 'following', 'posts.attachments')->where('username', $username)->first();
+        $user = User::with(['follower', 'following', 'posts' => function ($q) {
+            $q->with('attachments')->latest();
+        }])->where('username', $username)->first();
         $userLoggedFollowing = $userLogged->following()->where('following_id', $user->id)->first();
 
         $followingStatus = '';

@@ -18,9 +18,10 @@ const handleLogout = async () => {
     })
     alert(response.data.message)
     localStorage.removeItem('token')
+    localStorage.removeItem('username')
+    localStorage.removeItem('is_private')
     router.push({name: 'Login'})
   } catch (error) {
-    console.log(error)
     alert(error.response.data.message)
   }
 }
@@ -32,7 +33,7 @@ const handleLogout = async () => {
     <div class="container">
       <router-link class="navbar-brand" :to="{name:'Homepage'}">Facegram</router-link>
       <div class="navbar-nav">
-        <router-link :to="{name: 'Profile', params: {username: username}}" class="nav-link">{{ username }}</router-link>
+        <router-link v-if="username" :to="{name: 'Profile', params: {username: username}}" class="nav-link">{{ username }}</router-link>
         <p @click="handleLogout()" style="cursor: pointer;" class="nav-link" href="index.html">Logout</p>
       </div>
     </div>
