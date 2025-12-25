@@ -165,7 +165,7 @@ onMounted(() => {
                 <b>{{ dataDetailUser?.followers_count }}</b> followers
               </div>
               <div class="profile-list">
-                <div class="card">
+                <div class="card" v-if="dataFollower?.length > 0">
                   <div class="card-body">
                     <div class="profile-user" v-for="(item, index) in dataFollower" :key="index">
                       <router-link :to="{ name: 'Profile', params: { username: item?.username } }"
@@ -181,7 +181,7 @@ onMounted(() => {
                 <b>{{ dataDetailUser?.following_count }}</b> following
               </div>
               <div class="profile-list">
-                <div class="card">
+                <div class="card" v-if="dataFollowing?.length > 0">
                   <div class="card-body">
                     <div class="profile-user" v-for="(item, index) in dataFollowing" :key="index">
                       <router-link :to="{ name: 'Profile', params: { username: item?.username } }"

@@ -83,7 +83,7 @@ class FollowController extends Controller
                 "message" => "User not found"
             ], 404);
         }
-        $following = Follow::with('following')->where('follower_id', $user->id)->get();
+        $following = Follow::with('following')->where('follower_id', $user->id)->where('is_accepted', 1)->get();
 
         return response()->json([
             "following" => UserResource::collection($following)
@@ -131,7 +131,7 @@ class FollowController extends Controller
                 "message" => "User not found"
             ], 404);
         }
-        $follower = Follow::with('follower')->where('following_id', $user->id)->get();
+        $follower = Follow::with('follower')->where('following_id', $user->id)->where('is_accepted', 1)->get();
         
         return response()->json([
             "followers" => FollowerResource::collection($follower)

@@ -20,7 +20,6 @@ const fetchDataPosts = async () => {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
   })
-
   const posts = response.data.posts
   dataPosts.value.push(...posts)
   if (page.value >= posts.last_page) {
@@ -113,7 +112,7 @@ onMounted(() => {
               class="card-header d-flex align-items-center justify-content-between bg-transparent py-3"
             >
               <h6 class="mb-0">{{ item?.user?.full_name }}</h6>
-              <small class="text-muted">{{ timeAgo(item?.user?.created_at) }}</small>
+              <small class="text-muted">{{ timeAgo(item?.created_at) }}</small>
             </div>
             <div class="card-body">
               <div class="card-images mb-2">
